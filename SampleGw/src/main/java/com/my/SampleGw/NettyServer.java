@@ -1,9 +1,8 @@
 package com.my.SampleGw;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,13 +13,18 @@ import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 @Component("NettyServer")
 public class NettyServer {
@@ -31,6 +35,8 @@ public class NettyServer {
 	@Qualifier("springConfig")
 	private SpringConfig springConfig;
 	
+	private EventLoopGroup bossGroup;
+	private EventLoopGroup workerGroup;
 	private Channel serverChannel;
 	    
     @PostConstruct
@@ -46,15 +52,25 @@ public class NettyServer {
     
     @PreDestroy
 	public void stop() {
-		log.info("Shutdown server at " + serverTcpSocketAddress());
+		
+    	log.info("stop()");
+
+		if (bossGroup != null)
+			bossGroup.shutdownGracefully();
+		
+		if (workerGroup != null)
+			workerGroup.shutdownGracefully();
+		
 		if (serverChannel != null)
 			serverChannel.close();
+		
+		
 	}
     
-    public ServerBootstrap bootstrap() {
+    private ServerBootstrap bootstrap() {
 		
-		EventLoopGroup bossGroup = new NioEventLoopGroup(springConfig.getBossCount());
-        EventLoopGroup workerGroup = new NioEventLoopGroup(springConfig.getWorkerCount());
+		bossGroup = new NioEventLoopGroup(springConfig.getBossCount());
+        workerGroup = new NioEventLoopGroup(springConfig.getWorkerCount());
         
 		ServerBootstrap b = new ServerBootstrap();
 		b.group(bossGroup, workerGroup)
@@ -63,36 +79,46 @@ public class NettyServer {
 		          @Override
 		          protected void initChannel(SocketChannel ch) throws Exception {
 		            ChannelPipeline pipeline = ch.pipeline();
-		            //pipeline.addLast(SERVICE_HANDLER);
 		            
+		            pipeline.addLast(new StringDecoder(StandardCharsets.UTF_8));
+		            pipeline.addLast(new StringEncoder(StandardCharsets.UTF_8));
+		            pipeline.addLast(new ServerHandler());
+		           
 		          }
 		        }
 		);
 
-		Map<ChannelOption<?>, Object> tcpChannelOptions = tcpChannelOptions();
-		Set<ChannelOption<?>> keySet = tcpChannelOptions.keySet();
-		for (ChannelOption option : keySet) {
-			b.option(option, tcpChannelOptions.get(option));
-		}
+		b.option(ChannelOption.SO_KEEPALIVE, 	springConfig.isKeepAlive()); 
+		b.option(ChannelOption.SO_BACKLOG, 		springConfig.getBacklog());    
+		b.option(ChannelOption.SO_LINGER, 		springConfig.getLinger());      
+		b.option(ChannelOption.TCP_NODELAY, 	springConfig.isNodelay());    
+		b.option(ChannelOption.SO_RCVBUF, 		springConfig.getRcvBuf());      
+		b.option(ChannelOption.SO_SNDBUF, 		springConfig.getSndBuf());      
+		
 		return b;
 	}
-    
-    public Map<ChannelOption<?>, Object> tcpChannelOptions() {
-		Map<ChannelOption<?>, Object> options = new HashMap<ChannelOption<?>, Object>();
-		options.put(ChannelOption.SO_KEEPALIVE, springConfig.isKeepAlive());
-		options.put(ChannelOption.SO_BACKLOG, springConfig.getBacklog());
-		options.put(ChannelOption.SO_LINGER, springConfig.getLinger());
-		options.put(ChannelOption.TCP_NODELAY, springConfig.isNodelay());
-		options.put(ChannelOption.SO_RCVBUF, springConfig.getRcvBuf());
-		options.put(ChannelOption.SO_SNDBUF, springConfig.getSndBuf());
-		return options;
-	}
 
-    public InetSocketAddress serverTcpSocketAddress() {
+    private InetSocketAddress serverTcpSocketAddress() {
 		if ("org".equals(springConfig.getDemonType())) {
+			log.info("org port : " + springConfig.getOrgServerPort());
 			return new InetSocketAddress(springConfig.getOrgServerPort());
 		}
 		return null;
 	}
+    
+    class ServerHandler extends SimpleChannelInboundHandler<Object> {
+    	@Override
+    	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    		// echo server
+    		ctx.channel().writeAndFlush( msg ).addListener(ChannelFutureListener.CLOSE);
+    		log.info("channelRead - msg : " + (String)msg);
+    	}
+    	
+		@Override
+		protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+
+		}
+    	
+    }
 
 }
