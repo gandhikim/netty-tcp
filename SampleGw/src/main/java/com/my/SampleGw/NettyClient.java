@@ -1,7 +1,6 @@
 package com.my.SampleGw;
 
 import java.net.InetSocketAddress;
-
 import java.nio.charset.StandardCharsets;
 
 import javax.annotation.PostConstruct;
@@ -11,64 +10,57 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import com.my.SampleGw.NettyServer.ServerHandler;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LoggingHandler;
 
-/**
- * add jvm [-Dio.netty.noResourceLeakDetection]
- *  
- * @author gandhi.kim
- * */
+@Component("NettyClient")
+public class NettyClient {
 
-@Component("NettyServer")
-public class NettyServer {
-	
-	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NettyServer.class);
+	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NettyClient.class);
 	
 	@Autowired
 	@Qualifier("springConfig")
 	private SpringConfig springConfig;
 	
-	private EventLoopGroup bossGroup;
-	private EventLoopGroup workerGroup;
-	private Channel serverChannel;
+	private EventLoopGroup group;
+	private Channel clientChannel;
+	//private ChannelFuture channelFuture;
 	    
     @PostConstruct
     public void start() throws Exception {
 	
     	try {
     		ServerBootstrap b = setBootstrap(); 
-    		serverChannel = b.bind(serverTcpSocketAddress())
-    				.sync()
-    				.channel()
-    				.closeFuture()
-    				.sync()
-    				.channel();
+    		//clientChannel = b.co
+    		
+    		
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (bossGroup != null)
-				bossGroup.shutdownGracefully();
+			if (group != null)
+				group.shutdownGracefully();
 			
-			if (workerGroup != null)
-				workerGroup.shutdownGracefully();
-			
-			if (serverChannel != null)
-				serverChannel.close();
+			if (clientChannel != null)
+				clientChannel.close();
 		}
 	
     }
@@ -76,25 +68,23 @@ public class NettyServer {
     @PreDestroy
 	public void stop() {
 
-		if (bossGroup != null)
-			bossGroup.shutdownGracefully();
-		
-		if (workerGroup != null)
-			workerGroup.shutdownGracefully();
+    	if (group != null)
+			group.shutdownGracefully();
 
-		if (serverChannel != null)
-			serverChannel.close();
+		if (clientChannel != null)
+			clientChannel.close();
 		
 	}
     
-    private ServerBootstrap setBootstrap() {
+	@SuppressWarnings("unchecked")
+	private ServerBootstrap setBootstrap() {
 		
-		bossGroup = new NioEventLoopGroup(springConfig.getBossCount());
-        workerGroup = new NioEventLoopGroup(springConfig.getWorkerCount());
+		group = new NioEventLoopGroup();
         
 		ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup)
-			.channel(NioServerSocketChannel.class).handler(new LoggingHandler())
+		b.group(group)
+			.channel((Class<? extends ServerChannel>) NioSocketChannel.class).handler(new LoggingHandler())
+
 			.childHandler(new ChannelInitializer<SocketChannel>() {
 		          @Override
 		          protected void initChannel(SocketChannel ch) throws Exception {
@@ -106,14 +96,16 @@ public class NettyServer {
 		           
 		          }
 		        }
+		        
 		);
+
 
 		b.option(ChannelOption.SO_KEEPALIVE, 	springConfig.isKeepAlive()); 
 		b.option(ChannelOption.SO_BACKLOG, 		springConfig.getBacklog());    
 		b.option(ChannelOption.SO_LINGER, 		springConfig.getLinger());      
 		b.option(ChannelOption.TCP_NODELAY, 	springConfig.isNodelay());    
 		b.option(ChannelOption.SO_RCVBUF, 		springConfig.getRcvBuf());      
-		b.option(ChannelOption.SO_SNDBUF, 		springConfig.getSndBuf());      
+		b.option(ChannelOption.SO_SNDBUF, 		springConfig.getSndBuf());
 		
 		return b;
 	}
