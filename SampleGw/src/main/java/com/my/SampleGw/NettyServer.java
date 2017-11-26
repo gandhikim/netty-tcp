@@ -126,12 +126,16 @@ public class NettyServer {
 		return null;
 	}
     
-    class ServerHandler extends SimpleChannelInboundHandler<Object> {
+    class ServerHandler 
+    		extends SimpleChannelInboundHandler<Object> {
+    	
     	@Override
     	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     		// echo server
-    		ctx.channel().writeAndFlush( msg ).addListener(ChannelFutureListener.CLOSE);
-    		log.info("channelRead - msg : " + (String)msg);
+    		
+    		String respMsg = "[echo]" + msg;
+    		ctx.channel().writeAndFlush( respMsg ).addListener(ChannelFutureListener.CLOSE);
+    		log.info("channelRead - msg : " + (String)respMsg);
     	}
     	
 		@Override
