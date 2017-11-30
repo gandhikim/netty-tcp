@@ -29,6 +29,7 @@ public class NettyClient {
 
 	@Autowired
 	@Qualifier("springConfig")
+	private SpringConfig springConfig;
 
 	public String send(String address, int port, String message, int timeout) throws Exception {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();

@@ -21,7 +21,7 @@ public class ClientTest extends TestCase {
 	public void testSend(){
 		try {
 
-			for(int i=0; i<100; i++){
+			for(int i=0; i<10; i++){
 				assertEquals(
 						"[echo]testMsg[" + Integer.toString(i)
 						, client.send("127.0.0.1", 12010, "testMsg[" + Integer.toString(i), 3000)
