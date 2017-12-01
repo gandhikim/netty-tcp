@@ -9,6 +9,7 @@ import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -42,16 +43,40 @@ public class NettyServer {
 	@Qualifier("springConfig")
 	private SpringConfig springConfig;
 	
+	@Autowired
+	@Qualifier("stringDecoder")
+	public StringDecoder stringDecoder;
+	
+	@Autowired
+	@Qualifier("stringEncoder")
+	public StringEncoder stringEncoder;
+	
+	@Autowired
+	@Qualifier("serverChannelInitializer")
+	private ServerChannelInitializer serverChannelInitializer;
+	
+	@Autowired
+	@Qualifier("bossGroup")
 	private EventLoopGroup bossGroup;
+	
+	@Autowired
+	@Qualifier("workerGroup")
 	private EventLoopGroup workerGroup;
+	
+	@Autowired
+	@Qualifier("serverBootstrap")
+	private ServerBootstrap b;
+	
+	@Autowired
+	@Qualifier("inetSocketAddress")
+	private InetSocketAddress inetSocketAddress;
+	
 	private Channel serverChannel;
-	    
+	
     @PostConstruct
     public void start() throws Exception {
-	
     	try {
-    		ServerBootstrap b = setBootstrap(); 
-    		serverChannel = b.bind(serverTcpSocketAddress())
+    		serverChannel = b.bind(inetSocketAddress)
     				.sync()
     				.channel()
     				.closeFuture()
@@ -75,7 +100,6 @@ public class NettyServer {
     
     @PreDestroy
 	public void stop() {
-
 		if (bossGroup != null)
 			bossGroup.shutdownGracefully();
 		
@@ -86,27 +110,66 @@ public class NettyServer {
 			serverChannel.close();
 		
 	}
+
+    class ServerHandler 
+    		extends SimpleChannelInboundHandler<Object> {
+    	
+    	@Override
+    	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    		String respMsg = "[echo]" + msg;
+    		ctx.channel().writeAndFlush( respMsg ).addListener(ChannelFutureListener.CLOSE);
+    		log.info("channelRead - msg : " + (String)respMsg);
+    	}
+    	
+		@Override
+		protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+
+		}
+    }
+
+	@Bean(name = "stringEncoder")
+	public StringEncoder stringEncoder() {
+		return new StringEncoder(StandardCharsets.UTF_8);
+	}
+
+	@Bean(name = "stringDecoder")
+	public StringDecoder stringDecoder() {
+		return new StringDecoder(StandardCharsets.UTF_8);
+	}
+
+    @Component
+    @Qualifier("serverChannelInitializer")
+    class ServerChannelInitializer
+    		extends ChannelInitializer<SocketChannel> {
+
+		@Override
+		protected void initChannel(SocketChannel ch) throws Exception {		
+			ChannelPipeline pipeline = ch.pipeline();
+
+            pipeline.addLast(stringDecoder);
+            pipeline.addLast(stringEncoder);
+            pipeline.addLast(new ServerHandler());
+            
+		}
+    }
     
+    @Bean(name = "bossGroup", destroyMethod = "shutdownGracefully")
+	private NioEventLoopGroup bossGroup() {
+		return new NioEventLoopGroup(springConfig.getBossCount());
+	}
+    
+    @Bean(name = "workerGroup", destroyMethod = "shutdownGracefully")
+    private NioEventLoopGroup workerGroup() {
+		return new NioEventLoopGroup(springConfig.getWorkerCount());
+	}
+    
+    @Bean(name = "serverBootstrap")
     private ServerBootstrap setBootstrap() {
-		
-		bossGroup = new NioEventLoopGroup(springConfig.getBossCount());
-        workerGroup = new NioEventLoopGroup(springConfig.getWorkerCount());
-        
 		ServerBootstrap b = new ServerBootstrap();
 		b.group(bossGroup, workerGroup)
-			.channel(NioServerSocketChannel.class).handler(new LoggingHandler())
-			.childHandler(new ChannelInitializer<SocketChannel>() {
-		          @Override
-		          protected void initChannel(SocketChannel ch) throws Exception {
-		            ChannelPipeline pipeline = ch.pipeline();
-		            
-		            pipeline.addLast(new StringDecoder(StandardCharsets.UTF_8));
-		            pipeline.addLast(new StringEncoder(StandardCharsets.UTF_8));
-		            pipeline.addLast(new ServerHandler());
-		           
-		          }
-		        }
-		);
+			.channel(NioServerSocketChannel.class)
+			.handler(new LoggingHandler())
+			.childHandler(serverChannelInitializer);
 
 		b.option(ChannelOption.SO_KEEPALIVE, 	springConfig.isKeepAlive()); 
 		b.option(ChannelOption.SO_BACKLOG, 		springConfig.getBacklog());    
@@ -117,7 +180,8 @@ public class NettyServer {
 		
 		return b;
 	}
-
+	
+    @Bean(name = "inetSocketAddress")
     private InetSocketAddress serverTcpSocketAddress() {
 		if ("org".equals(springConfig.getDemonType())) {
 			log.info("org port : " + springConfig.getOrgServerPort());
@@ -126,23 +190,4 @@ public class NettyServer {
 		return null;
 	}
     
-    class ServerHandler 
-    		extends SimpleChannelInboundHandler<Object> {
-    	
-    	@Override
-    	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    		// echo server
-    		
-    		String respMsg = "[echo]" + msg;
-    		ctx.channel().writeAndFlush( respMsg ).addListener(ChannelFutureListener.CLOSE);
-    		log.info("channelRead - msg : " + (String)respMsg);
-    	}
-    	
-		@Override
-		protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-
-		}
-    	
-    }
-
 }
