@@ -1,4 +1,4 @@
-package com.my.SampleGw;
+package com.my.sampleGw;
 
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

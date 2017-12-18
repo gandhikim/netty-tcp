@@ -1,4 +1,4 @@
-package com.my.SampleGw;
+package com.my.sampleGw;
 
 import java.nio.charset.Charset;
 
