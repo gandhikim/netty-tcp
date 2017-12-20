@@ -3,7 +3,10 @@ package com.my.SampleGw;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.my.sampleGw.NettyClient;
+
 import junit.framework.TestCase;
+
 
 public class ClientTest extends TestCase {
 

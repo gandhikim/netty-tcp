@@ -2,10 +2,6 @@ package com.my.sampleGw;
 
 import java.nio.charset.Charset;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -21,17 +17,32 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 
-@Component("NettyClient")
 public class NettyClient {
 
 	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NettyClient.class);
 	public String resultData;
 
-	@Autowired
-	@Qualifier("springConfig")
-	private SpringConfig springConfig;
+	private String address;
+	private int port;
+	private int timeout;
 
+	public NettyClient() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public NettyClient(String address, int port, int timeout) {
+		// TODO Auto-generated constructor stub
+		this.address = address;
+		this.port = port;
+		this.timeout = timeout;
+	}
+	
+	public String send(String message) throws Exception {
+		return send(this.address, this.port, message, this.timeout);
+	}
+	
 	public String send(String address, int port, String message, int timeout) throws Exception {
+		
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		final NettyClient client = this;
 		final String msg = message;
