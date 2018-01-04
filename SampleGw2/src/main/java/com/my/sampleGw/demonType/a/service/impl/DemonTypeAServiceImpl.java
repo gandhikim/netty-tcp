@@ -1,5 +1,13 @@
 package com.my.sampleGw.demonType.a.service.impl;
 
-public class DemonTypeAServiceImpl {
+import com.my.sampleGw.demonType.a.service.DemonTypeAService;
 
+public class DemonTypeAServiceImpl implements DemonTypeAService {
+
+	@Override
+	public String dmAService(String requestMsg) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

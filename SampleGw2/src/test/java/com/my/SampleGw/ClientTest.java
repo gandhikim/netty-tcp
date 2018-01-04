@@ -3,7 +3,7 @@ package com.my.SampleGw;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.my.sampleGw.NettyClient;
+import com.my.sampleGw.common.util.NettyClient;
 
 import junit.framework.TestCase;
 

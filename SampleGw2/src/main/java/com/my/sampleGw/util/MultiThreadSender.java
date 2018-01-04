@@ -1,8 +1,7 @@
 package com.my.sampleGw.util;
 
 import org.apache.log4j.Logger;
-
-import com.my.sampleGw.NettyClient;
+import com.my.sampleGw.common.util.NettyClient;
 import java.util.concurrent.Callable;
 
 public class MultiThreadSender implements Callable<String> {

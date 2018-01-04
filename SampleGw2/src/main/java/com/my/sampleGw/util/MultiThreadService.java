@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.my.sampleGw.NettyClient;
+import com.my.sampleGw.common.util.NettyClient;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
