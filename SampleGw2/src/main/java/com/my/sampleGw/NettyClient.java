@@ -2,6 +2,8 @@ package com.my.sampleGw;
 
 import java.nio.charset.Charset;
 
+import org.springframework.stereotype.Component;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -16,10 +18,11 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
-
+@Component("nettyClient")
 public class NettyClient {
 
 	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NettyClient.class);
+	
 	public String resultData;
 
 	private String address;
@@ -54,8 +57,9 @@ public class NettyClient {
 			b.handler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
-					ch.pipeline().addLast(new StringDecoder(Charset.forName("UTF-8")),
-							new StringEncoder(Charset.forName("UTF-8")), new ClientHandler(msg, client));
+					ch.pipeline().addLast(new StringDecoder(Charset.forName("UTF-8")));
+					ch.pipeline().addLast(new StringEncoder(Charset.forName("UTF-8")));
+					ch.pipeline().addLast(new ClientHandler(msg, client));
 				}
 			});
 

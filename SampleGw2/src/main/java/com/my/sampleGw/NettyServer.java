@@ -34,7 +34,7 @@ import io.netty.handler.logging.LoggingHandler;
  * @author gandhi.kim
  * */
 
-@Component("NettyServer")
+@Component("nettyServer")
 public class NettyServer {
 	
 	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NettyServer.class);
@@ -71,10 +71,16 @@ public class NettyServer {
 	@Qualifier("inetSocketAddress")
 	private InetSocketAddress inetSocketAddress;
 	
+	@Autowired
+	@Qualifier("orgApiHandler")
+	OrgApiHandler orgApiHandler;
+	
+	
 	private Channel serverChannel;
 	
     @PostConstruct
     public void start() throws Exception {
+    	
     	try {
     		serverChannel = b.bind(inetSocketAddress)
     				.sync()
@@ -115,10 +121,20 @@ public class NettyServer {
     		extends SimpleChannelInboundHandler<Object> {
     	
     	@Override
-    	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    		String respMsg = "[echo]" + msg;
-    		ctx.channel().writeAndFlush( respMsg ).addListener(ChannelFutureListener.CLOSE);
-    		log.info("channelRead - msg : " + (String)respMsg);
+    	public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
+    		String requestMessage = (String)obj;
+    		
+    		String responseMessage = null;
+    		
+    		if( "org".equals(springConfig.getDemonType())) {
+    			responseMessage = orgApiHandler.doProcess(requestMessage);
+    		} else {
+    			// echo
+    			responseMessage = "[echo]" + requestMessage;
+    		}
+    		
+    		ctx.channel().writeAndFlush( responseMessage ).addListener(ChannelFutureListener.CLOSE);
+    		log.info("channelRead - msg : " + responseMessage);
     	}
     	
 		@Override
