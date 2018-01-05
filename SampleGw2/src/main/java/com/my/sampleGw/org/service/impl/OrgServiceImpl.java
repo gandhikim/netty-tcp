@@ -1,10 +1,13 @@
 package com.my.sampleGw.org.service.impl;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.my.sampleGw.common.config.SpringConfig;
+import com.my.sampleGw.common.util.MessageUtil;
 import com.my.sampleGw.common.util.NettyClient;
 import com.my.sampleGw.org.service.OrgService;
 
@@ -21,6 +24,10 @@ public class OrgServiceImpl implements OrgService {
 	@Qualifier("nettyClient")
 	NettyClient nettyClient;
 	
+	@Autowired
+	@Qualifier("messageUtil")
+	MessageUtil messageUtil;
+	
 	@Override
 	public String orgService(String requestMsg) throws Exception {
 		
@@ -36,7 +43,7 @@ public class OrgServiceImpl implements OrgService {
 		try {
 			
 			//responseMsg = nettyClient.send("127.0.0.1", 12011, requestMsg, 3000);
-			
+			log.info("messageUtil[" + messageUtil.getMessage("name", null));
 			responseMsg = "[echo]" + requestMsg;
 			
 		} catch (Exception e) {

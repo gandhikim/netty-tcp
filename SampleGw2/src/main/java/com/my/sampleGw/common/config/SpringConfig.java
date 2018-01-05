@@ -14,14 +14,6 @@ public class SpringConfig {
 	
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SpringConfig.class);
 
-	//-DdemonType=gift
-	@Value("#{systemProperties['demonType'] == null ? 'org' : systemProperties['demonType']}")
-	private String dmType;
-	
-	//-DdemonEnv=loc
-	@Value("#{systemProperties['demonEnv'] == null ? 'loc' : systemProperties['demonEnv']}")
-	private String dmEnv;
-
 	@Value("${boss.thread.count}")
 	private int bossCount;
 
@@ -54,26 +46,77 @@ public class SpringConfig {
 	
 	@Value("${org.tcp.timeout}")
 	private int orgServerTimeout;
+	
+	@Value("${a.tcp.ip}")
+	private String aServerIp;
+	
+	@Value("${a.tcp.port}")
+	private int aServerPort;
+	
+	@Value("${a.tcp.timeout}")
+	private int aServerTimeout;
+	
+	@Value("${b.tcp.ip}")
+	private String bServerIp;
+	
+	@Value("${b.tcp.port}")
+	private int bServerPort;
+	
+	@Value("${b.tcp.timeout}")
+	private int bServerTimeout;
 
-	@Value("${demonType}")
+	@Value("${demonType:org}")
 	private String demonType;
+
 	
-	public String getDmType() {
-		return dmType;
+	public String getaServerIp() {
+		return aServerIp;
 	}
-	
-	public void setDmType(String dmType) {
-		this.dmType = dmType;
+
+	public void setaServerIp(String aServerIp) {
+		this.aServerIp = aServerIp;
 	}
-	
-	public String getDmEnv() {
-		return dmEnv;
+
+	public int getaServerPort() {
+		return aServerPort;
 	}
-	
-	public void setDmEnv(String dmEnv) {
-		this.dmEnv = dmEnv;
+
+	public void setaServerPort(int aServerPort) {
+		this.aServerPort = aServerPort;
 	}
-	
+
+	public int getaServerTimeout() {
+		return aServerTimeout;
+	}
+
+	public void setaServerTimeout(int aServerTimeout) {
+		this.aServerTimeout = aServerTimeout;
+	}
+
+	public String getbServerIp() {
+		return bServerIp;
+	}
+
+	public void setbServerIp(String bServerIp) {
+		this.bServerIp = bServerIp;
+	}
+
+	public int getbServerPort() {
+		return bServerPort;
+	}
+
+	public void setbServerPort(int bServerPort) {
+		this.bServerPort = bServerPort;
+	}
+
+	public int getbServerTimeout() {
+		return bServerTimeout;
+	}
+
+	public void setbServerTimeout(int bServerTimeout) {
+		this.bServerTimeout = bServerTimeout;
+	}
+
 	public int getBossCount() {
 		return bossCount;
 	}
@@ -173,16 +216,16 @@ public class SpringConfig {
 	@Bean(name = "inetSocketAddress")
     public InetSocketAddress serverTcpSocketAddress() {
 		if ("org".equals(demonType)) {
-			log.info("org port : " + orgServerPort);
-			log.info("demonType[" + demonType);
+			log.info("org port");
 			return new InetSocketAddress(orgServerPort);
 		} else if ("a".equals(demonType)) {
-			log.info("a port : " + orgServerPort);
-			return new InetSocketAddress(orgServerPort);
+			log.info("a port");
+			return new InetSocketAddress(aServerPort);
 		} else if ("b".equals(demonType)) {
-			log.info("b port : " + orgServerPort);
-			return new InetSocketAddress(orgServerPort);
+			log.info("b port");
+			return new InetSocketAddress(bServerPort);
 		} else {
+			log.error("SpringConfig - serverTcpSocketAddress - invalid demontype");
 			return null;
 		}
 	}

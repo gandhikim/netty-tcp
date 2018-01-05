@@ -33,6 +33,7 @@ public class App
 		} else if("stg".equals(demonEnv)) {
 			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext_stg.xml");
 		} else {
+			// org
 			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext.xml");
 		}
 
