@@ -22,7 +22,20 @@ public class App
 		log.info("=  Server Start Success");
 		log.info("=================================================================================");
 		
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext.xml");
+		AbstractApplicationContext ctx = null;
+		
+		if("loc".equals(demonEnv)) {
+			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext_loc.xml");
+		} else if("dev".equals(demonEnv)) {
+				ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext_dev.xml");
+		} else if("real".equals(demonEnv)) {
+			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext_real.xml");
+		} else if("stg".equals(demonEnv)) {
+			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext_stg.xml");
+		} else {
+			ctx = new ClassPathXmlApplicationContext("classpath:appContext/applicationContext.xml");
+		}
+
 		ctx.registerShutdownHook();
 
     }

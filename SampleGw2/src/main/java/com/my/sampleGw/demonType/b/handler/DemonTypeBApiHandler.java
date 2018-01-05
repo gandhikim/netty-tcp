@@ -11,19 +11,19 @@ public class DemonTypeBApiHandler {
 	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger( DemonTypeBApiHandler.class );
 	
 	@Autowired
-	@Qualifier("orgService")
+	@Qualifier("bService")
 	DemonTypeBService dmBService;
 	
 	public String doProcess( String requestMessage ) throws Exception {
 		
-		log.info( "OrgApiHandler - doProcess - Start." );
+		log.info( "DemonTypeBApiHandler - doProcess - Start." );
 		
 		// get Api & parsing msg
 		//if( msgType.equals("...") ) {}
 		
 		String responseMessage = null;
 		//responseMessage = "[echo]" + requestMessage;
-		responseMessage = dmBService.dmBService(requestMessage);
+		responseMessage = dmBService.dmService(requestMessage);
 		
 		return responseMessage;
 	}

@@ -1,7 +1,10 @@
 package com.my.sampleGw.common.config;
 
 
+import java.net.InetSocketAddress;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -10,7 +13,15 @@ import org.springframework.context.annotation.PropertySource;
 public class SpringConfig {
 	
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SpringConfig.class);
+
+	//-DdemonType=gift
+	@Value("#{systemProperties['demonType'] == null ? 'org' : systemProperties['demonType']}")
+	private String dmType;
 	
+	//-DdemonEnv=loc
+	@Value("#{systemProperties['demonEnv'] == null ? 'loc' : systemProperties['demonEnv']}")
+	private String dmEnv;
+
 	@Value("${boss.thread.count}")
 	private int bossCount;
 
@@ -47,6 +58,21 @@ public class SpringConfig {
 	@Value("${demonType}")
 	private String demonType;
 	
+	public String getDmType() {
+		return dmType;
+	}
+	
+	public void setDmType(String dmType) {
+		this.dmType = dmType;
+	}
+	
+	public String getDmEnv() {
+		return dmEnv;
+	}
+	
+	public void setDmEnv(String dmEnv) {
+		this.dmEnv = dmEnv;
+	}
 	
 	public int getBossCount() {
 		return bossCount;
@@ -144,6 +170,21 @@ public class SpringConfig {
 		this.demonType = demonType;
 	}
 	
-	
+	@Bean(name = "inetSocketAddress")
+    public InetSocketAddress serverTcpSocketAddress() {
+		if ("org".equals(demonType)) {
+			log.info("org port : " + orgServerPort);
+			log.info("demonType[" + demonType);
+			return new InetSocketAddress(orgServerPort);
+		} else if ("a".equals(demonType)) {
+			log.info("a port : " + orgServerPort);
+			return new InetSocketAddress(orgServerPort);
+		} else if ("b".equals(demonType)) {
+			log.info("b port : " + orgServerPort);
+			return new InetSocketAddress(orgServerPort);
+		} else {
+			return null;
+		}
+	}
 
 }

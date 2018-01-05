@@ -35,9 +35,9 @@ public class OrgServiceImpl implements OrgService {
 		// DB job
 		try {
 			
-			responseMsg = nettyClient.send("127.0.0.1", 12011, requestMsg, 3000);
+			//responseMsg = nettyClient.send("127.0.0.1", 12011, requestMsg, 3000);
 			
-			//responseMsg = "[echo]" + requestMsg;
+			responseMsg = "[echo]" + requestMsg;
 			
 		} catch (Exception e) {
 			// TODO: handle exception

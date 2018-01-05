@@ -2,8 +2,6 @@ package com.my.sampleGw.common.util;
 
 import java.net.InetSocketAddress;
 
-import java.nio.charset.StandardCharsets;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -12,30 +10,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import com.my.sampleGw.common.config.SpringConfig;
-import com.my.sampleGw.org.handler.OrgApiHandler;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LoggingHandler;
 
-/**
- * add jvm [-Dio.netty.noResourceLeakDetection]
- *  
- * @author gandhi.kim
- * */
+import com.my.sampleGw.common.config.SpringConfig;
+
 
 @Component("nettyServer")
 public class NettyServer {
@@ -45,15 +29,7 @@ public class NettyServer {
 	@Autowired
 	@Qualifier("springConfig")
 	private SpringConfig springConfig;
-	
-	@Autowired
-	@Qualifier("stringDecoder")
-	public StringDecoder stringDecoder;
-	
-	@Autowired
-	@Qualifier("stringEncoder")
-	public StringEncoder stringEncoder;
-	
+
 	@Autowired
 	@Qualifier("serverChannelInitializer")
 	private ServerChannelInitializer serverChannelInitializer;
@@ -73,11 +49,6 @@ public class NettyServer {
 	@Autowired
 	@Qualifier("inetSocketAddress")
 	private InetSocketAddress inetSocketAddress;
-	
-	@Autowired
-	@Qualifier("orgApiHandler")
-	OrgApiHandler orgApiHandler;
-	
 	
 	private Channel serverChannel;
 	
@@ -120,58 +91,6 @@ public class NettyServer {
 		
 	}
 
-    class ServerHandler 
-    		extends SimpleChannelInboundHandler<Object> {
-    	
-    	@Override
-    	public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
-    		String requestMessage = (String)obj;
-    		
-    		String responseMessage = null;
-    		
-    		if( "org".equals(springConfig.getDemonType())) {
-    			responseMessage = orgApiHandler.doProcess(requestMessage);
-    		} else {
-    			// echo
-    			responseMessage = "[echo]" + requestMessage;
-    		}
-    		
-    		ctx.channel().writeAndFlush( responseMessage ).addListener(ChannelFutureListener.CLOSE);
-    		log.info("channelRead - msg : " + responseMessage);
-    	}
-    	
-		@Override
-		protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-
-		}
-    }
-
-	@Bean(name = "stringEncoder")
-	public StringEncoder stringEncoder() {
-		return new StringEncoder(StandardCharsets.UTF_8);
-	}
-
-	@Bean(name = "stringDecoder")
-	public StringDecoder stringDecoder() {
-		return new StringDecoder(StandardCharsets.UTF_8);
-	}
-
-    @Component
-    @Qualifier("serverChannelInitializer")
-    class ServerChannelInitializer
-    		extends ChannelInitializer<SocketChannel> {
-
-		@Override
-		protected void initChannel(SocketChannel ch) throws Exception {		
-			ChannelPipeline pipeline = ch.pipeline();
-
-            pipeline.addLast(stringDecoder);
-            pipeline.addLast(stringEncoder);
-            pipeline.addLast(new ServerHandler());
-            
-		}
-    }
-    
     @Bean(name = "bossGroup", destroyMethod = "shutdownGracefully")
 	private NioEventLoopGroup bossGroup() {
 		return new NioEventLoopGroup(springConfig.getBossCount());
@@ -199,14 +118,5 @@ public class NettyServer {
 		
 		return b;
 	}
-	
-    @Bean(name = "inetSocketAddress")
-    private InetSocketAddress serverTcpSocketAddress() {
-		if ("org".equals(springConfig.getDemonType())) {
-			log.info("org port : " + springConfig.getOrgServerPort());
-			return new InetSocketAddress(springConfig.getOrgServerPort());
-		}
-		return null;
-	}
-    
+
 }
