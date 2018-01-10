@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.my.sampleGw.common.config.SpringConfig;
 import com.my.sampleGw.demonType.a.handler.DemonTypeAApiHandler;
 import com.my.sampleGw.demonType.b.handler.DemonTypeBApiHandler;
-import com.my.sampleGw.org.handler.OrgApiHandler;
+import com.my.sampleGw.demonType.org.handler.OrgApiHandler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

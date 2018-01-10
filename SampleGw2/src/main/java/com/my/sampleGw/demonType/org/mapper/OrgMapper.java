@@ -1,4 +1,4 @@
-package com.my.sampleGw.org.mapper;
+package com.my.sampleGw.demonType.org.mapper;
 
 public interface OrgMapper {
 	

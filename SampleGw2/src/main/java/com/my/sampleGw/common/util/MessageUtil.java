@@ -10,25 +10,24 @@ import org.springframework.context.NoSuchMessageException;
 public class MessageUtil implements MessageSourceAware {
 	
 	private MessageSource messageSource;
-
+	
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
 
 	public String getMessage(String key, Object[] params, Locale locale )
 			throws NoSuchMessageException {
-		return messageSource.getMessage(key, params, null/*Locale.ENGLISH*/);
+		return messageSource.getMessage(key, params, locale);
 	}
 	
 	public String getMessage( String key, Locale locale ) 
 			throws NoSuchMessageException {
-		return messageSource.getMessage( key, null, locale );
-		
+		return getMessage(key, null, locale);
 	}
 
-	public String getMessage( String key ) 
+	/*public String getMessage( String key ) 
 			throws NoSuchMessageException {
-		return getMessage( key, null );
-	}
+		return getMessage(key, null, null);
+	}*/
 
 }

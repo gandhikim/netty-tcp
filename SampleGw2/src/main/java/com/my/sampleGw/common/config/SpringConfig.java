@@ -67,7 +67,7 @@ public class SpringConfig {
 
 	@Value("${demonType:org}")
 	private String demonType;
-
+	
 	
 	public String getaServerIp() {
 		return aServerIp;

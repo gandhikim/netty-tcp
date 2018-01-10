@@ -24,7 +24,7 @@ public class MultiThreadTest extends TestCase {
 		mts = new MultiThreadService();
 		mts.setDest("127.0.0.1", 12010, 3000);
 		list = new ArrayList<String>();
-		
+		/*
 		for(int i=0; i < 10; i++) {
 			list.add("aaaa");
 			list.add("bbbb");
@@ -32,12 +32,13 @@ public class MultiThreadTest extends TestCase {
 			list.add("0000");
 			list.add("1111");
 		}
+		*/
 
 	}
 	
 	@Test
 	public void testSend(){
-		mts.provider(list);
+		//mts.provider(list);
 	}
 
 }

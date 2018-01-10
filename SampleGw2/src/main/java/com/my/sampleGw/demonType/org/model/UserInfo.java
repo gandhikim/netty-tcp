@@ -1,4 +1,4 @@
-package com.my.sampleGw.org.model;
+package com.my.sampleGw.demonType.org.model;
 
 public class UserInfo {
 

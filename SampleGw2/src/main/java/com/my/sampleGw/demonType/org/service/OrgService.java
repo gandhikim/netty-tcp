@@ -1,4 +1,4 @@
-package com.my.sampleGw.org.service;
+package com.my.sampleGw.demonType.org.service;
 
 public interface OrgService {
 

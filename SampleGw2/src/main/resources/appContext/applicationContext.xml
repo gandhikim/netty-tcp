@@ -7,15 +7,17 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 							http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
 							http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-							http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+							http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd
 							http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
 	    					http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 	    					http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
 	    					http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
-	 
+
 	<context:annotation-config/>	
 	<context:component-scan base-package="com.my.sampleGw" />
 
+	<util:properties id="cmm" location="classpath:properties/server-config.org.properties"></util:properties>
+	
 	<!-- 다국어 설정 -->
 	<!-- <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> --><!-- 수정 후 재가동히야 적용 -->
 	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"><!-- 수정 후 재가동 없이 적용 -->
@@ -32,16 +34,84 @@
     <bean id="messageUtil" class="com.my.sampleGw.common.util.MessageUtil" >
     	<property name="messageSource" ref="messageSource" />
     </bean>
-    
-      
+
+    <!--   
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
         <property name="defaultLocale" value="en"/>
     </bean>
-    
+    -->
 
-    <!-- -->
+    <!-- DB setting --> 
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="#{cmm['db.oracle.url']}" />
+		<property name="username" value="#{cmm['db.oracle.user']}" />
+		<property name="password" value="#{cmm['db.oracle.password']}" />
+		<!-- <property name="initialSize" value="50" /> -->
+		<property name="maxActive" value="100" />
+        <property name="maxIdle" value="100" />
+        <property name="minIdle" value="10" />
+        <!-- <property name="maxWait" value="10000" /> -->
+        <property name="validationQuery" value="select 1 from dual" />
+        <!-- <property name="validationQueryTimeout" value="10" /> -->
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="testWhileIdle" value="true" />
+        <!-- <property name="timeBetweenEvictionRunsMillis" value="600000" /> -->
+        <!-- <property name="timeBetweenEvictionRunsMillis" value="3000" /> -->
+        <!-- <property name="numTestsPerEvictionRun" value="30" /> -->
+        <!-- <property name="minEvictableIdleTimeMillis" value="-1" /> -->
+        <!-- <property name="removeAbandoned" value="false" /> -->
+        <!-- <property name="removeAbandonedTimeout" value="60" /> -->	
+	</bean>
+	 
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" value="classpath:mybatis/mapper-*.xml" />
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<mybatis:scan base-package="com.my.sampleGw" factory-ref="sqlSessionFactory"/>
+	
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+ 	<!-- 
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" rollback-for="Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="requiredTx1" expression="execution(* com.my.sampleGw.*.*.*.*.*Impl.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="requiredTx1" />
+	</aop:config>
+	 -->
+	 
+	 <!-- 
+	<task:annotation-driven executor="taskExecutor" scheduler="taskScheduler" />
+	<task:executor id="taskExecutor" pool-size="100-1000"
+		queue-capacity="1000" rejection-policy="ABORT" />
+	<task:scheduler id="taskScheduler" />
+	 -->
+	 
+	<aop:aspectj-autoproxy>
+        <aop:include name="logAspect" />        
+    </aop:aspectj-autoproxy>
+	<bean id="logAspect" class="com.my.sampleGw.common.util.LogAspect" />
+
+
+	
     
-    
+     
     <!-- -->
 
 </beans>

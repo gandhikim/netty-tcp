@@ -24,6 +24,7 @@ public class ClientTest extends TestCase {
 	public void testSend(){
 		try {
 
+			
 			for(int i=0; i<1; i++){
 				assertEquals(
 						"[echo]testMsg[" + Integer.toString(i)
