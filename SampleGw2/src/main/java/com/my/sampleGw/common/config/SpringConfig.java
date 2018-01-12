@@ -56,14 +56,14 @@ public class SpringConfig {
 	@Value("${a.tcp.timeout}")
 	private int aServerTimeout;
 	
-	@Value("${b.tcp.ip}")
-	private String bServerIp;
+	@Value("${batch.tcp.ip}")
+	private String batchServerIp;
 	
-	@Value("${b.tcp.port}")
-	private int bServerPort;
+	@Value("${batch.tcp.port}")
+	private int batchServerPort;
 	
-	@Value("${b.tcp.timeout}")
-	private int bServerTimeout;
+	@Value("${batch.tcp.timeout}")
+	private int batchServerTimeout;
 
 	@Value("${demonType:org}")
 	private String demonType;
@@ -93,28 +93,28 @@ public class SpringConfig {
 		this.aServerTimeout = aServerTimeout;
 	}
 
-	public String getbServerIp() {
-		return bServerIp;
+	public String getbatchServerIp() {
+		return batchServerIp;
 	}
 
-	public void setbServerIp(String bServerIp) {
-		this.bServerIp = bServerIp;
+	public void setbatchServerIp(String batchServerIp) {
+		this.batchServerIp = batchServerIp;
 	}
 
-	public int getbServerPort() {
-		return bServerPort;
+	public int getbatchServerPort() {
+		return batchServerPort;
 	}
 
-	public void setbServerPort(int bServerPort) {
-		this.bServerPort = bServerPort;
+	public void setbatchServerPort(int batchServerPort) {
+		this.batchServerPort = batchServerPort;
 	}
 
-	public int getbServerTimeout() {
-		return bServerTimeout;
+	public int getbatchServerTimeout() {
+		return batchServerTimeout;
 	}
 
-	public void setbServerTimeout(int bServerTimeout) {
-		this.bServerTimeout = bServerTimeout;
+	public void setbatchServerTimeout(int batchServerTimeout) {
+		this.batchServerTimeout = batchServerTimeout;
 	}
 
 	public int getBossCount() {
@@ -221,9 +221,9 @@ public class SpringConfig {
 		} else if ("a".equals(demonType)) {
 			log.info("a port");
 			return new InetSocketAddress(aServerPort);
-		} else if ("b".equals(demonType)) {
-			log.info("b port");
-			return new InetSocketAddress(bServerPort);
+		} else if ("batch".equals(demonType)) {
+			log.info("batch port");
+			return new InetSocketAddress(batchServerPort);
 		} else {
 			log.error("SpringConfig - serverTcpSocketAddress - invalid demontype");
 			return null;

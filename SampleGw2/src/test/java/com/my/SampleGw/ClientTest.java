@@ -25,10 +25,10 @@ public class ClientTest extends TestCase {
 		try {
 
 			
-			for(int i=0; i<1; i++){
+			for(int i=0; i<5; i++){
 				assertEquals(
 						"[echo]testMsg[" + Integer.toString(i)
-						, client.send("127.0.0.1", 12010, "testMsg[" + Integer.toString(i), 3000)
+						, client.send("127.0.0.1", 12012, "testMsg[" + Integer.toString(i), 3000)
 						);	
 			}
 			

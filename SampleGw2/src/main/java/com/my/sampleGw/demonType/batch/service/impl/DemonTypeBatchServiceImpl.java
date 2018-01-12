@@ -1,4 +1,4 @@
-package com.my.sampleGw.demonType.b.service.impl;
+package com.my.sampleGw.demonType.batch.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 
 import com.my.sampleGw.common.config.SpringConfig;
 import com.my.sampleGw.common.util.NettyClient;
-import com.my.sampleGw.demonType.b.service.DemonTypeBService;
+import com.my.sampleGw.demonType.batch.service.DemonTypeBatchService;
 
-@Service("bService")
-public class DemonTypeBServiceImpl implements DemonTypeBService {
+@Service("batchService")
+public class DemonTypeBatchServiceImpl implements DemonTypeBatchService {
 
-private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DemonTypeBServiceImpl.class);
+private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DemonTypeBatchServiceImpl.class);
 	
 	@Autowired
 	@Qualifier("springConfig")
@@ -24,7 +24,7 @@ private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DemonType
 	@Override
 	public String dmService(String requestMsg) throws Exception {
 		
-		log.info( "DemonTypeBServiceImpl - dmService - Start." );
+		log.info( "DemonTypeBatchServiceImpl - dmService - Start." );
 		
 		String responseMsg = null;
 		

@@ -1,18 +1,18 @@
-package com.my.sampleGw.demonType.b.handler;
+package com.my.sampleGw.demonType.batch.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.my.sampleGw.demonType.b.service.DemonTypeBService;
+import com.my.sampleGw.demonType.batch.service.DemonTypeBatchService;
 
-@Component("demonTypeBApiHandler")
-public class DemonTypeBApiHandler {
-	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger( DemonTypeBApiHandler.class );
+@Component("demonTypeBatchApiHandler")
+public class DemonTypeBatchApiHandler {
+	private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger( DemonTypeBatchApiHandler.class );
 	
 	@Autowired
-	@Qualifier("bService")
-	DemonTypeBService dmBService;
+	@Qualifier("batchService")
+	DemonTypeBatchService dmBatchService;
 	
 	public String doProcess( String requestMessage ) throws Exception {
 		
@@ -23,7 +23,7 @@ public class DemonTypeBApiHandler {
 		
 		String responseMessage = null;
 		//responseMessage = "[echo]" + requestMessage;
-		responseMessage = dmBService.dmService(requestMessage);
+		responseMessage = dmBatchService.dmService(requestMessage);
 		
 		return responseMessage;
 	}

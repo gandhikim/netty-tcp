@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.my.sampleGw.common.config.SpringConfig;
 import com.my.sampleGw.demonType.a.handler.DemonTypeAApiHandler;
-import com.my.sampleGw.demonType.b.handler.DemonTypeBApiHandler;
+import com.my.sampleGw.demonType.batch.handler.DemonTypeBatchApiHandler;
 import com.my.sampleGw.demonType.org.handler.OrgApiHandler;
 
 import io.netty.channel.ChannelFutureListener;
@@ -36,8 +36,8 @@ public class ServerHandler
 	
 	
 	@Autowired
-	@Qualifier("demonTypeBApiHandler")
-	DemonTypeBApiHandler demonTypeBApiHandler;
+	@Qualifier("demonTypeBatchApiHandler")
+	DemonTypeBatchApiHandler demonTypeBatchApiHandler;
 	
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
@@ -49,8 +49,8 @@ public class ServerHandler
 			responseMessage = orgApiHandler.doProcess(requestMessage);
 		} else if ("a".equals(springConfig.getDemonType())) {
 			responseMessage = demonTypeAApiHandler.doProcess(requestMessage);
-		} else if ("b".equals(springConfig.getDemonType())) {
-			responseMessage = demonTypeBApiHandler.doProcess(requestMessage);
+		} else if ("batch".equals(springConfig.getDemonType())) {
+			responseMessage = demonTypeBatchApiHandler.doProcess(requestMessage);
 		} else {
 			// echo
 			responseMessage = "[echo]" + requestMessage;

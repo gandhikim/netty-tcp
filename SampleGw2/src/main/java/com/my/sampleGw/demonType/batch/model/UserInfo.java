@@ -1,4 +1,4 @@
-package com.my.sampleGw.demonType.b.model;
+package com.my.sampleGw.demonType.batch.model;
 
 public class UserInfo {
 

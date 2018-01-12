@@ -18,6 +18,7 @@
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 		<org.mybatis.version>3.3.0</org.mybatis.version>
 		<org.mybatis.spring.version>1.2.2</org.mybatis.spring.version>
+		<org.quartz-scheduler.version>2.2.1</org.quartz-scheduler.version>
 	</properties>
 
 	<parent>
@@ -52,22 +53,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-jpa</artifactId> 
+			</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
 		<dependency>
@@ -91,7 +88,7 @@
 			<version>${com.oracle.version}</version>
 		</dependency>
 
-		<!-- DB --> 
+		<!-- DB -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -111,27 +108,26 @@
 			<version>${org.mybatis.spring.version}</version>
 		</dependency>
 
-		<!-- 
-		<dependency>
-			<groupid>org.springframework</groupid>
-			<artifactid>spring-jdbc</artifactid>
-			<version>4.1.6.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupid>org.springframework</groupid>
-			<artifactid>spring-orm</artifactid>
-			<version>4.1.6.RELEASE</version>
-		</dependency>
-		-->
-		
-		<!-- Spring and Transactions 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupid>org.springframework</groupid> <artifactid>spring-jdbc</artifactid> 
+			<version>4.1.6.RELEASE</version> </dependency> <dependency> <groupid>org.springframework</groupid> 
+			<artifactid>spring-orm</artifactid> <version>4.1.6.RELEASE</version> </dependency> -->
 
+		<!-- Spring and Transactions <dependency> <groupId>org.springframework</groupId> 
+			<artifactId>spring-tx</artifactId> <version>${spring-framework.version}</version> 
+			</dependency> -->
+
+		<!-- Quartz scheduler -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${org.quartz-scheduler.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>${org.quartz-scheduler.version}</version>
+		</dependency>
 
 
 	</dependencies>
