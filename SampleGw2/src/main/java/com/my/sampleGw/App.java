@@ -1,5 +1,7 @@
 package com.my.sampleGw;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -7,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class App 
 {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(App.class);
+	private static final Logger log = LoggerFactory.getLogger(App.class);
 	
     @SuppressWarnings("resource")
 	public static void main( String[] args )
@@ -29,9 +31,9 @@ public class App
 		if("batch".equals(demonType)) {
 			
 			String[] strArr = new String[3];
+			
 			strArr[0] = "classpath:batch/job-config.xml";
-			strArr[1] = "classpath:batch/job-config.xml";
-			//strArr[1] = "classpath:batch/scheduler-config.xml";
+			strArr[1] = "classpath:batch/scheduler-config.xml";
 			
 			if("loc".equals(demonEnv)) {
 				strArr[2] = "classpath:appContext/applicationContext_loc.xml";

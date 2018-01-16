@@ -14,9 +14,9 @@
 	    http://www.springframework.org/schema/jdbc 
 		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-<!-- 
+ 
 	<bean id="batchJobTest" class="com.my.sampleGw.demonType.batch.service.job.BatchJobTest"></bean>
---> 
-	<bean id="testScheduler" class="com.my.sampleGw.demonType.batch.service.scheduler.TestScheduler"></bean>
-	
+
+
+
 </beans>
