@@ -97,8 +97,10 @@
 	</tx:advice>
  
 	<aop:config>
-		<aop:pointcut id="requiredTx1"
-			expression="execution(* com.my.sampleGw.*.*.*.*.*Impl.*(..))" />
+		<!--  
+		<aop:pointcut id="requiredTx1" expression="execution(* com.my.sampleGw.*.*.*.*.*Impl.*(..))" />
+		-->
+		<aop:pointcut id="requiredTx1" expression="execution(* com.my.sampleGw.demonType.db.*.*.*Impl.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="requiredTx1" />
 	</aop:config>
 	

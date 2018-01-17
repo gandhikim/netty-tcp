@@ -16,7 +16,7 @@ public class DemonTypeBatchApiHandler {
 	
 	public String doProcess( String requestMessage ) throws Exception {
 		
-		log.info( "DemonTypeBApiHandler - doProcess - Start." );
+		log.info( "DemonTypeBatchApiHandler - doProcess - Start." );
 		
 		// get Api & parsing msg
 		//if( msgType.equals("...") ) {}

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.my.sampleGw.common.config.SpringConfig;
 import com.my.sampleGw.common.util.MessageUtil;
 import com.my.sampleGw.common.util.NettyClient;
-import com.my.sampleGw.demonType.org.mapper.OrgMapper;
+import com.my.sampleGw.demonType.db.service.DBService;
 import com.my.sampleGw.demonType.org.service.OrgService;
 
 @Service("orgServiceImpl")
@@ -30,7 +30,11 @@ public class OrgServiceImpl implements OrgService {
 	MessageUtil messageUtil;
 	
 	@Autowired
-	private OrgMapper orgMapper;
+	@Qualifier("dbService")
+	DBService dbService;
+	
+	//@Autowired
+	//private OrgMapper orgMapper;
 	
 	@Override
 	public String orgService(String requestMsg) throws Exception {
@@ -50,7 +54,8 @@ public class OrgServiceImpl implements OrgService {
 			//log.info("messageUtil[" + messageUtil.getMessage("name", Locale.ENGLISH));
 			responseMsg = "[echo]" + requestMsg;
 			
-			log.info("OrgMapper[" + orgMapper.selectDBConnectTest());
+			if("testMsg[6".equals(requestMsg))
+				log.info("dbServiceImpl.dbService[" + dbService.dbService("test"));
 			
 			
 		} catch (Exception e) {
